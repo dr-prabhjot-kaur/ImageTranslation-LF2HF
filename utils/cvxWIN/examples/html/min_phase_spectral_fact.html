@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Minimal phase spectral factorization</title>
+<link rel="canonical" href="G:MatLab2018Commoncvxexamples/html/min_phase_spectral_fact.html">
+<link rel="stylesheet" href="..examples.css" type="text/css">
+</head>
+<body>
+<div id="header">
+<h1>Minimal phase spectral factorization</h1>
+Jump to:&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#source">Source code</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#output">Text output</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+Plots
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="..index.html">Library index</a>
+</div>
+<div id="content">
+<a id="source"></a>
+<pre class="codeinput">
+<span class="comment">% A PSD matrix is found which minimizes a weighted trace while obtaining</span>
+<span class="comment">% fixed sums along the diagonals. Notice the use of a FOR loop to access</span>
+<span class="comment">% the diagonals of X. A later version of CVX will eliminate the need for</span>
+<span class="comment">% this by allowing the use of the SPDIAGS function in side models.</span>
+<span class="comment">% Nevertheless, this example provides an illustration of the use of</span>
+<span class="comment">% standard Matlab control statements to build models.</span>
+<span class="comment">%</span>
+<span class="comment">% Adapted from an example provided in the SeDuMi documentation.</span>
+
+<span class="comment">% Generate data</span>
+b = [2; 0.2; -0.3];
+n = length( b );
+
+<span class="comment">% Create and solve model</span>
+cvx_begin <span class="string">sdp</span>
+    variable <span class="string">X( n, n )</span> <span class="string">symmetric</span>
+    dual <span class="string">variable</span> <span class="string">y{n}</span>
+    dual <span class="string">variable</span> <span class="string">Z</span>
+    minimize( ( n - 1 : -1 : 0 ) * diag( X ) );
+    <span class="keyword">for</span> k = 1 : n,
+        sum( diag( X, k - 1 ) ) == b( k ) : y{k};
+    <span class="keyword">end</span>
+    X &gt;= 0 : Z;
+cvx_end
+y = [ y{:} ]';
+
+<span class="comment">% Display resuls</span>
+disp( <span class="string">'The optimal point, X:'</span> );
+disp( X )
+disp( <span class="string">'The diagonal sums:'</span> );
+disp( sum( spdiags( X, 0:n-1 ), 1 ) );
+disp( <span class="string">'min( eig( X ) ) (should be nonnegative):'</span> );
+disp( min( eig( X ) ) )
+disp( <span class="string">'The optimal weighted trace:'</span> );
+disp( ( n - 1 : -1 : 0 ) * diag( X ) );
+</pre>
+<a id="output"></a>
+<pre class="codeoutput">
+ 
+Calling SDPT3 4.0: 631 variables, 3 equality constraints
+------------------------------------------------------------
+
+ num. of constraints =  3
+ dim. of sdp    var  =  3,   num. of sdp  blk  =  1
+ dim. of free   var  = 625 *** convert ublk to lblk
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+   HKM      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|9.2e+00|3.9e+02|4.7e+06|-3.000000e+01  0.000000e+00| 0:0:00| chol  1  1 
+ 1|1.000|0.987|3.5e-06|5.5e+00|1.3e+04|-2.266679e+00 -1.884809e+01| 0:0:00| chol  1  1 
+ 2|1.000|0.911|7.9e-08|5.7e-01|2.7e+02|-2.561441e+00 -4.148001e+00| 0:0:00| chol  1  1 
+ 3|0.862|0.964|4.2e-09|2.9e-02|4.3e+00|-3.748395e+00 -4.231709e+00| 0:0:00| chol  1  1 
+ 4|0.986|0.982|8.4e-09|1.4e-03|4.2e-02|-3.874690e+00 -3.882525e+00| 0:0:00| chol  1  1 
+ 5|0.988|0.989|3.1e-10|1.8e-04|8.7e-04|-3.877237e+00 -3.877311e+00| 0:0:00| chol  1  1 
+ 6|0.989|0.989|2.5e-10|3.8e-06|4.4e-06|-3.877267e+00 -3.877268e+00| 0:0:00| chol  1  1 
+ 7|0.989|0.989|1.3e-11|1.9e-08|1.5e-08|-3.877267e+00 -3.877267e+00| 0:0:00| chol  1  1 
+ 8|0.989|0.989|3.1e-12|7.0e-11|1.4e-10|-3.877267e+00 -3.877267e+00| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -3.87726743e+00
+ dual   objective value = -3.87726744e+00
+ gap := trace(XZ)       = 1.36e-10
+ relative gap           = 1.55e-11
+ actual relative gap    = 1.41e-11
+ rel. primal infeas (scaled problem)   = 3.05e-12
+ rel. dual     "        "       "      = 6.95e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 2.0e+00, 2.2e+00, 2.4e+00
+ norm(A), norm(b), norm(C) = 3.1e+00, 3.0e+00, 3.2e+00
+ Total CPU time (secs)  = 0.16  
+ CPU time per iteration = 0.02  
+ termination code       =  0
+ DIMACS: 3.1e-12  0.0e+00  7.5e-11  0.0e+00  1.4e-11  1.5e-11
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +0.122733
+ 
+The optimal point, X:
+    0.0468   -0.0369   -0.3000
+   -0.0369    0.0292    0.2369
+   -0.3000    0.2369    1.9240
+
+The diagonal sums:
+    2.0000    0.2000   -0.3000
+
+min( eig( X ) ) (should be nonnegative):
+   1.2124e-11
+
+The optimal weighted trace:
+    0.1227
+
+</pre>
+</div>
+</body>
+</html>

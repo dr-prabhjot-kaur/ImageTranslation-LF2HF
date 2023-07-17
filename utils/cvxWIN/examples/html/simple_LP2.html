@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Builds and solves a simple inequality-constrained linear program</title>
+<link rel="canonical" href="G:MatLab2018Commoncvxexamples/html/simple_LP2.html">
+<link rel="stylesheet" href="..examples.css" type="text/css">
+</head>
+<body>
+<div id="header">
+<h1>Builds and solves a simple inequality-constrained linear program</h1>
+Jump to:&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#source">Source code</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#output">Text output</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+Plots
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="..index.html">Library index</a>
+</div>
+<div id="content">
+<a id="source"></a>
+<pre class="codeinput">
+echo <span class="string">on</span>
+
+n = 10;
+A = randn(2*n,n);
+b = randn(2*n,1);
+c = randn(n,1);
+d = randn;
+cvx_begin
+   variable <span class="string">x(n)</span>
+   dual <span class="string">variables</span> <span class="string">y</span> <span class="string">z</span>
+   minimize( c' * x + d )
+   subject <span class="string">to</span>
+      y : A * x &lt;= b;
+cvx_end
+
+echo <span class="string">off</span>
+</pre>
+<a id="output"></a>
+<pre class="codeoutput">
+n = 10;
+A = randn(2*n,n);
+b = randn(2*n,1);
+c = randn(n,1);
+d = randn;
+cvx_begin
+   variable x(n)
+   dual variables y z
+   minimize( c' * x + d )
+   subject to
+      y : A * x &lt;= b;
+cvx_end
+ 
+Calling SDPT3 4.0: 655 variables, 20 equality constraints
+------------------------------------------------------------
+
+ num. of constraints = 20
+ dim. of linear var  = 20
+ dim. of free   var  = 635 *** convert ublk to lblk
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|7.7e+00|2.0e+02|1.6e+06| 3.204065e-09  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.640|0.537|2.8e+00|9.2e+01|1.6e+05| 2.823795e+01  6.820302e+01| 0:0:00| chol  1  1 
+ 2|1.000|0.771|1.3e-05|2.1e+01|9.5e+03| 3.018174e+01  2.821231e+01| 0:0:00| chol  1  1 
+ 3|1.000|0.833|8.2e-06|3.5e+00|4.3e+02| 1.184424e+01  3.493360e+00| 0:0:00| chol  1  1 
+ 4|0.523|0.142|4.8e-06|3.9e+00|2.4e+02|-3.005643e+01  2.906346e+00| 0:0:00| chol  1  1 
+ 5|0.435|0.308|2.8e-06|2.7e+00|1.3e+02|-9.608851e+01  2.072076e+00| 0:0:00| chol  1  1 
+ 6|0.081|0.042|2.5e-06|3.4e+00|1.9e+02|-1.404972e+02  1.624129e+00| 0:0:00| chol  1  1 
+ 7|0.732|0.351|7.7e-07|2.2e+00|1.8e+02|-3.872261e+02 -1.047525e+00| 0:0:00| chol  1  1 
+ 8|0.540|0.243|3.8e-07|1.7e+00|2.2e+02|-2.480446e+03 -1.060940e+00| 0:0:00| chol  1  1 
+ 9|0.112|0.035|2.1e-07|2.1e+00|2.1e+04|-4.992224e+04 -1.070760e+00| 0:0:00| chol  1  1 
+10|0.342|0.261|1.5e-07|1.6e+00|1.1e+04|-2.351029e+05 -9.421553e-01| 0:0:00| chol  1  1 
+11|0.040|0.004|5.6e-07|2.0e+00|2.7e+06|-5.796971e+06 -1.158262e+00| 0:0:00| chol  1  1 
+12|1.000|0.144|4.0e-07|2.3e+00|4.3e+07|-5.724369e+07 -1.157799e+00| 0:0:00| chol  1  1 
+13|1.000|0.372|1.3e-06|1.4e+00|3.6e+07|-3.148250e+08 -7.366654e-01| 0:0:00| chol  2  2 
+14|0.079|0.016|1.3e-06|1.9e+00|2.1e+09|-3.615994e+09 -4.889996e-01| 0:0:00| chol  2  2 
+15|1.000|0.264|4.1e-05|1.4e+00|4.4e+09|-2.753594e+10 -1.252839e-02| 0:0:00| chol  2  2 
+16|1.000|0.110|5.2e-04|1.6e+00|8.0e+11|-1.532692e+12 -1.035574e-01| 0:0:00| chol  2  2 
+17|1.000|0.310|3.6e-02|1.1e+00|6.6e+11|-1.308598e+13  1.014690e-01| 0:0:00| chol  2  2 
+  stop: primal infeas has deteriorated too much, 1.0e+00
+18|1.000|0.032|3.6e-02|1.1e+00|6.6e+11|-1.308598e+13  1.014690e-01| 0:0:00|
+  prim_inf,dual_inf,relgap = 3.56e-02, 1.12e+00, 5.05e-02
+  sqlp stop: dual problem is suspected of being infeasible
+-------------------------------------------------------------------
+ number of iterations   = 18
+ residual of dual infeasibility        
+ certificate X          = 3.66e-13
+ reldist to infeas.    &lt;= 5.87e-15
+ Total CPU time (secs)  = 0.11  
+ CPU time per iteration = 0.01  
+ termination code       =  2
+ DIMACS: 7.1e-02  0.0e+00  1.9e+00  0.0e+00  -1.0e+00  5.0e-02
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Unbounded
+Optimal value (cvx_optval): -Inf
+ 
+
+echo off
+
+</pre>
+</div>
+</body>
+</html>
